@@ -1,130 +1,94 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Gastos Familiares</title>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabaseClient.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
         body {
-            font-family: 'Quicksand', sans-serif;
+            font-family: Arial, sans-serif;
             background: #fdf2f8;
-            min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
             padding: 1rem;
         }
-        .login-card {
-            background: #ffffff;
+        .login-box {
+            background: white;
+            padding: 2rem;
             border-radius: 24px;
-            padding: 2.5rem 2rem;
-            max-width: 420px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            max-width: 400px;
             width: 100%;
-            box-shadow: 0 8px 32px rgba(236, 72, 153, 0.15);
-            text-align: center;
         }
-        .login-card h1 {
+        h1 {
             color: #db2777;
+            text-align: center;
             font-size: 1.8rem;
-            margin-bottom: 0.3rem;
         }
-        .login-card .subtitle {
-            color: #9ca3af;
-            margin-bottom: 1.8rem;
-            font-size: 0.95rem;
+        p.sub {
+            text-align: center;
+            color: #666;
+            margin-bottom: 1.5rem;
         }
-        .login-card .form-group {
-            text-align: left;
-            margin-bottom: 1.2rem;
+        .form-group {
+            margin-bottom: 1rem;
         }
-        .login-card .form-group label {
+        label {
             display: block;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #9ca3af;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #555;
             margin-bottom: 0.3rem;
         }
-        .login-card .form-group input {
+        input {
             width: 100%;
-            padding: 0.7rem 1rem;
+            padding: 0.7rem;
             border: 2px solid #fce4ec;
-            border-radius: 16px;
+            border-radius: 12px;
             font-size: 1rem;
-            font-family: inherit;
-            background: #fdf2f8;
-            transition: 0.25s;
+            box-sizing: border-box;
         }
-        .login-card .form-group input:focus {
+        input:focus {
             outline: none;
             border-color: #ec4899;
-            box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.12);
         }
-        .login-card .btn-login {
+        .btn {
             width: 100%;
             padding: 0.8rem;
             background: #ec4899;
-            color: #fff;
+            color: white;
             border: none;
             border-radius: 60px;
             font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
-            transition: 0.25s;
             margin-top: 0.5rem;
         }
-        .login-card .btn-login:hover {
+        .btn:hover {
             background: #db2777;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 28px rgba(236, 72, 153, 0.35);
         }
-        .login-card .login-footer {
-            margin-top: 1.2rem;
+        .switch {
+            text-align: center;
+            margin-top: 1rem;
             font-size: 0.9rem;
-            color: #9ca3af;
+            color: #666;
         }
-        .login-card .login-footer a {
+        .switch a {
             color: #ec4899;
             cursor: pointer;
-            font-weight: 700;
-            text-decoration: none;
+            font-weight: 600;
         }
-        .login-card .login-footer a:hover {
-            text-decoration: underline;
-        }
-        .login-card .error-msg {
+        .error {
             color: #f43f5e;
             font-size: 0.85rem;
+            text-align: center;
             margin-top: 0.5rem;
             min-height: 1.5rem;
-        }
-        .toggle-form {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-        }
-        .toggle-form button {
-            background: none;
-            border: none;
-            padding: 0.4rem 1.2rem;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #9ca3af;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: 0.25s;
-            font-family: inherit;
-        }
-        .toggle-form button.active {
-            color: #ec4899;
-            border-bottom-color: #ec4899;
         }
         .toast {
             position: fixed;
@@ -132,150 +96,96 @@
             right: 20px;
             padding: 0.8rem 1.5rem;
             border-radius: 16px;
-            color: #fff;
+            color: white;
             font-weight: 600;
-            font-size: 0.9rem;
             z-index: 999;
             animation: subir 0.3s ease;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
-        .toast--exito {
-            background: #10b981;
-        }
-        .toast--error {
-            background: #ef4444;
-        }
+        .toast--exito { background: #10b981; }
+        .toast--error { background: #ef4444; }
         @keyframes subir {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .oculto {
-            display: none;
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-    <div class="login-card">
-        <h1>💰 Gastos Familiares</h1>
-        <p class="subtitle">Administra los gastos de tu familia</p>
+<div class="login-box">
+    <h1>💰 Gastos Familiares</h1>
+    <p class="sub">Administra los gastos de tu familia</p>
 
-        <div class="toggle-form">
-            <button id="btnLoginTab" class="active">Iniciar sesión</button>
-            <button id="btnRegistroTab">Crear cuenta</button>
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="email">Correo electrónico</label>
+            <input type="email" id="email" placeholder="tu@email.com" required>
         </div>
-
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="email">Correo electrónico</label>
-                <input type="email" id="email" placeholder="tu@email.com" required />
-            </div>
-            <div class="form-group">
-                <label for="password">Contraseña</label>
-                <input type="password" id="password" placeholder="••••••••" required minlength="6" />
-            </div>
-            <div class="error-msg" id="errorMsg"></div>
-            <button type="submit" class="btn-login" id="btnSubmit">Entrar</button>
-        </form>
-
-        <div class="login-footer">
-            <span id="footerText">¿No tienes cuenta? <a id="toggleLink">Regístrate aquí</a></span>
+        <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" placeholder="••••••••" required minlength="6">
         </div>
+        <div class="error" id="errorMsg"></div>
+        <button type="submit" class="btn" id="btnSubmit">Entrar</button>
+    </form>
+
+    <div class="switch">
+        <span id="switchText">¿No tienes cuenta? <a id="switchLink">Regístrate aquí</a></span>
     </div>
+</div>
 
-    <!-- ============ SCRIPTS ============ -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-    </script>
-    <script src="js/supabaseClient.js">
-    </script>
-    <script>
-        // =========================================================
-        // FUNCIONES DE TOAST (para no depender de toast.js)
-        // =========================================================
-        function mostrarToast(mensaje, tipo = "exito") {
-            const toast = document.createElement("div");
-            toast.className = "toast toast--" + tipo;
+<script>
+    // =========================================================
+    // ESPERAR A QUE SUPABASE ESTÉ LISTO
+    // =========================================================
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // Verificar que supabase existe
+        if (typeof supabase === 'undefined') {
+            document.getElementById('errorMsg').textContent = 'Error: Supabase no está configurado. Revisa supabaseClient.js';
+            return;
+        }
+
+        // Elementos
+        const form = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const errorMsg = document.getElementById('errorMsg');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const switchLink = document.getElementById('switchLink');
+        const switchText = document.getElementById('switchText');
+
+        let modo = 'login';
+
+        // Función para cambiar entre login y registro
+        function toggleModo() {
+            if (modo === 'login') {
+                modo = 'registro';
+                btnSubmit.textContent = 'Crear cuenta';
+                switchText.innerHTML = '¿Ya tienes cuenta? <a id="switchLink">Inicia sesión</a>';
+                document.getElementById('switchLink').addEventListener('click', toggleModo);
+            } else {
+                modo = 'login';
+                btnSubmit.textContent = 'Entrar';
+                switchText.innerHTML = '¿No tienes cuenta? <a id="switchLink">Regístrate aquí</a>';
+                document.getElementById('switchLink').addEventListener('click', toggleModo);
+            }
+            errorMsg.textContent = '';
+        }
+
+        // Evento del enlace para cambiar modo
+        switchLink.addEventListener('click', toggleModo);
+
+        // Toast (notificación)
+        function mostrarToast(mensaje, tipo = 'exito') {
+            const toast = document.createElement('div');
+            toast.className = 'toast toast--' + tipo;
             toast.textContent = mensaje;
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
         }
 
-        // =========================================================
-        // FUNCIONES DE AUTENTICACIÓN (TODAS AQUÍ)
-        // =========================================================
-        async function registrar(email, password) {
-            try {
-                const { data, error } = await supabase.auth.signUp({
-                    email: email,
-                    password: password
-                });
-                if (error) console.error("Error en signUp:", error);
-                return { data, error };
-            } catch (err) {
-                console.error("Excepción en registrar:", err);
-                return { data: null, error: err };
-            }
-        }
-
-        async function iniciarSession(email, password) {
-            try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-                if (error) console.error("Error en signIn:", error);
-                return { data, error };
-            } catch (err) {
-                console.error("Excepción en iniciarSession:", err);
-                return { data: null, error: err };
-            }
-        }
-
-        // =========================================================
-        // LÓGICA DEL LOGIN
-        // =========================================================
-        const loginForm = document.getElementById('loginForm');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const errorMsg = document.getElementById('errorMsg');
-        const btnSubmit = document.getElementById('btnSubmit');
-        const toggleLink = document.getElementById('toggleLink');
-        const footerText = document.getElementById('footerText');
-        const btnLoginTab = document.getElementById('btnLoginTab');
-        const btnRegistroTab = document.getElementById('btnRegistroTab');
-
-        let modo = 'login';
-
-        function setModo(nuevoModo) {
-            modo = nuevoModo;
-            errorMsg.textContent = '';
-            if (modo === 'login') {
-                btnSubmit.textContent = 'Entrar';
-                footerText.innerHTML = '¿No tienes cuenta? <a id="toggleLink">Regístrate aquí</a>';
-                btnLoginTab.classList.add('active');
-                btnRegistroTab.classList.remove('active');
-                document.getElementById('toggleLink').addEventListener('click', () => setModo('registro'));
-            } else {
-                btnSubmit.textContent = 'Crear cuenta';
-                footerText.innerHTML = '¿Ya tienes cuenta? <a id="toggleLink">Inicia sesión</a>';
-                btnRegistroTab.classList.add('active');
-                btnLoginTab.classList.remove('active');
-                document.getElementById('toggleLink').addEventListener('click', () => setModo('login'));
-            }
-        }
-
-        btnLoginTab.addEventListener('click', () => setModo('login'));
-        btnRegistroTab.addEventListener('click', () => setModo('registro'));
-
-        document.addEventListener('DOMContentLoaded', () => setModo('login'));
-
-        loginForm.addEventListener('submit', async (e) => {
+        // Enviar formulario
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
             errorMsg.textContent = '';
 
@@ -289,41 +199,59 @@
 
             try {
                 if (modo === 'login') {
-                    // LOGIN
-                    const { data, error } = await iniciarSession(email, password);
+                    // INICIAR SESIÓN
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
                     if (error) {
                         errorMsg.textContent = 'Error: ' + error.message;
                         return;
                     }
+
                     mostrarToast('¡Bienvenido!', 'exito');
                     window.location.href = 'index.html';
+
                 } else {
-                    // REGISTRO
-                    const { data, error } = await registrar(email, password);
+                    // REGISTRARSE
+                    const { data, error } = await supabase.auth.signUp({
+                        email: email,
+                        password: password
+                    });
+
                     if (error) {
                         errorMsg.textContent = 'Error: ' + error.message;
                         return;
                     }
+
                     mostrarToast('Cuenta creada. Inicia sesión.', 'exito');
-                    setModo('login');
+                    // Cambiar a modo login automáticamente
+                    modo = 'login';
+                    btnSubmit.textContent = 'Entrar';
+                    switchText.innerHTML = '¿No tienes cuenta? <a id="switchLink">Regístrate aquí</a>';
+                    document.getElementById('switchLink').addEventListener('click', toggleModo);
                     emailInput.value = email;
                     passwordInput.value = '';
-                    passwordInput.focus();
+                    errorMsg.textContent = 'Cuenta creada. Ahora inicia sesión.';
                 }
+
             } catch (err) {
                 errorMsg.textContent = 'Error inesperado: ' + err.message;
                 console.error(err);
             }
         });
 
-        // Verificar sesión al cargar
+        // Si ya hay sesión, redirigir
         (async function checkSession() {
             const { data } = await supabase.auth.getSession();
             if (data.session) {
                 window.location.href = 'index.html';
             }
         })();
-    </script>
+
+    });
+</script>
 
 </body>
 </html>
